@@ -54,8 +54,8 @@
       means any form of electronic, verbal, or written communication sent
       to the Licensor or its representatives, including but not limited to
       communication on electronic mailing lists, source code control systems,
-      and issue tracking systems that are managed by, or on behalf of,
-      the Licensor for the purpose of discussing and improving the Work, but
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
       excluding communication that is conspicuously marked or otherwise
       designated in writing by the copyright owner as "Not a Contribution."
 
@@ -104,7 +104,7 @@
           the Derivative Works; and
 
       (d) If the Work includes a "NOTICE" text file as part of its
-          distribution, then Derivative Works that You distribute must
+          distribution, then any Derivative Works that You distribute must
           include a readable copy of the attribution notices contained
           within such NOTICE file, excluding those notices that do not
           pertain to any part of the Derivative Works, in at least one
@@ -140,9 +140,9 @@
       except as required for reasonable and customary use in describing the
       origin of the Work and reproducing the content of the NOTICE file.
 
-   7. Disclaimer of Warranty. Unless required by required by law or
+   7. Disclaimer of Warranty. Unless required by applicable law or
       agreed to in writing, Licensor provides the Work (and each
-      Contributor provides the Contributions) on an "AS IS" BASIS,
+      Contributor provides its Contributions) on an "AS IS" BASIS,
       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
       implied, including, without limitation, any warranties or conditions
       of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
@@ -152,7 +152,7 @@
 
    8. Limitation of Liability. In no event and under no legal theory,
       whether in tort (including negligence), contract, or otherwise,
-      unless required by required by law (such as deliberate and grossly
+      unless required by applicable law (such as deliberate and grossly
       negligent acts) or agreed to in writing, shall any Contributor be
       liable to You for damages, including any direct, indirect, special,
       incidental, or consequential damages of any character arising as a
@@ -171,7 +171,7 @@
       of any other Contributor, and only if You agree to indemnify,
       defend, and hold each Contributor harmless for any liability
       incurred by, or claims asserted against, such Contributor by reason
-      of your accepting such warranty or additional liability.
+      of your accepting any such warranty or additional liability.
 
    END OF TERMS AND CONDITIONS
 
@@ -190,7 +190,6 @@
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
-
    You may obtain a copy of the License at
 
        http://www.apache.org/licenses/LICENSE-2.0

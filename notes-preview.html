@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>Terax 完整功能預覽</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:#1a1a2e;color:#e0e0e0;height:100vh;display:flex;flex-direction:column}
+.hdr{height:40px;background:#16213e;display:flex;align-items:center;gap:6px;padding:0 12px;border-bottom:1px solid #0f3460}
+.hdr-btn{background:none;border:none;color:#a0a0a0;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:14px}
+.hdr-btn:hover{background:#0f3460;color:#fff}
+.hdr-btn.on{background:#0f3460;color:#fff}
+.hdr-sep{width:1px;height:16px;background:#0f3460}
+.hdr-srch{flex:1;height:28px;background:#0f3460;border:none;border-radius:6px;padding:0 12px;color:#e0e0e0;font-size:12px}
+.hdr-add{position:relative}
+.hdr-add-btn{background:none;border:none;color:#a0a0a0;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:16px;font-weight:700}
+.hdr-add-btn:hover{background:#0f3460;color:#fff}
+.add-popup{display:none;position:absolute;top:32px;right:0;background:#16213e;border:1px solid #0f3460;border-radius:8px;padding:4px;z-index:200;min-width:160px;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.add-popup.on{display:block}
+.add-popup button{display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;background:none;border:none;color:#e0e0e0;font-size:12px;cursor:pointer;border-radius:4px;text-align:left}
+.add-popup button:hover{background:#0f3460}
+.app{display:flex;flex:1;overflow:hidden}
+.sb{width:300px;background:#16213e;display:flex;flex-direction:column;border-right:1px solid #0f3460}
+.main{flex:1;background:#1a1a2e;overflow:hidden}
+.sb-hdr{padding:8px;border-bottom:1px solid #0f3460;display:flex;gap:6px}
+.sb-srch{flex:1;height:30px;background:#0f3460;border:none;border-radius:6px;padding:0 10px;color:#e0e0e0;font-size:12px}
+.sb-add{height:30px;padding:0 10px;background:#6366f1;border:none;border-radius:6px;color:#fff;font-size:11px;cursor:pointer;white-space:nowrap}
+.sb-add:hover{background:#4f46e5}
+.notes{flex:1;overflow-y:auto;padding:6px}
+.grp{margin-bottom:3px}
+.grp-hdr{display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:6px;cursor:pointer}
+.grp-hdr:hover{background:#0f3460}
+.grp-arr{font-size:8px;color:#888;transition:transform .2s;width:10px}
+.grp-arr.off{transform:rotate(-90deg)}
+.grp-clr{width:7px;height:7px;border-radius:50%}
+.grp-nm{font-size:11px;font-weight:500;color:#e0e0e0;flex:1}
+.grp-cnt{font-size:9px;color:#888;background:#0f3460;padding:1px 5px;border-radius:8px}
+.grp-act{display:flex;gap:2px;opacity:0}
+.grp-hdr:hover .grp-act{opacity:1}
+.grp-act button{background:none;border:none;color:#888;font-size:10px;padding:1px 3px;border-radius:3px;cursor:pointer}
+.grp-act button:hover{color:#fff;background:#0f3460}
+.sub-grp{margin-left:10px;border-left:1px solid #0f3460;padding-left:6px}
+.note{padding:6px 10px;border-radius:6px;cursor:pointer;margin-bottom:1px;display:flex;align-items:center;gap:6px}
+.note:hover{background:#0f3460}
+.note.on{background:#0f3460}
+.note-ic{font-size:11px}
+.note-info{flex:1;min-width:0}
+.note-tl{font-size:11px;color:#e0e0e0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-pr{font-size:9px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.note-atch{font-size:8px;color:#6366f1;margin-top:1px}
+.sb-rail{height:32px;display:flex;border-top:1px solid #0f3460}
+.rail-btn{flex:1;background:none;border:none;color:#a0a0a0;display:flex;align-items:center;justify-content:center;gap:3px;font-size:9px;cursor:pointer}
+.rail-btn.on{color:#fff;background:#0f3460}
+.rail-btn:hover{color:#fff}
+.space-sel{height:32px;background:#16213e;border-bottom:1px solid #0f3460;display:flex;align-items:center;padding:0 10px;gap:8px}
+.space-btn{padding:3px 10px;font-size:11px;border-radius:4px;border:1px solid #0f3460;background:transparent;color:#888;cursor:pointer}
+.space-btn.on{background:#6366f1;color:#fff;border-color:#6366f1}
+.space-btn:hover{border-color:#6366f1}
+.edt{flex:1;display:flex;flex-direction:column}
+.edt-bar{height:32px;background:#16213e;border-bottom:1px solid #0f3460;display:flex;align-items:center;gap:3px;padding:0 10px}
+.edt-btn{background:none;border:none;color:#a0a0a0;padding:3px 6px;border-radius:4px;cursor:pointer;font-size:11px}
+.edt-btn:hover{background:#0f3460;color:#fff}
+.edt-sep{width:1px;height:14px;background:#0f3460;margin:0 3px}
+.edt-title{display:flex;align-items:center;gap:6px;border-bottom:1px solid #0f3460;padding:10px 20px}
+.edt-title input{flex:1;background:none;border:none;font-size:16px;font-weight:600;color:#fff;outline:none}
+.edt-content{flex:1;display:flex;overflow:hidden}
+.edt-text{flex:1;background:none;border:none;padding:14px 20px;font-size:12px;line-height:1.8;color:#e0e0e0;resize:none;outline:none;font-family:monospace}
+.edt-prev{flex:1;padding:14px 20px;overflow-y:auto;font-size:12px;line-height:1.8;display:none}
+.edt-prev h1{font-size:20px;margin:10px 0 6px}
+.edt-prev h2{font-size:16px;margin:8px 0 5px}
+.edt-prev h3{font-size:14px;margin:6px 0 4px}
+.edt-prev p{margin:5px 0}
+.edt-prev ul,.edt-prev ol{margin:5px 0;padding-left:18px}
+.edt-prev code{background:#0f3460;padding:1px 4px;border-radius:3px;font-size:11px}
+.edt-prev pre{background:#0f3460;padding:8px;border-radius:5px;overflow-x:auto;margin:8px 0}
+.edt-prev blockquote{border-left:2px solid #6366f1;padding-left:8px;color:#888;margin:8px 0}
+.atch-bar{border-top:1px solid #0f3460;padding:6px 14px;display:flex;flex-wrap:wrap;gap:6px}
+.atch-item{display:flex;align-items:center;gap:3px;padding:3px 8px;background:#16213e;border:1px solid #0f3460;border-radius:6px;font-size:10px;cursor:pointer;position:relative}
+.atch-item:hover{border-color:#6366f1}
+.atch-rm{display:none;position:absolute;top:-5px;right:-5px;width:12px;height:12px;background:#ef4444;border-radius:50%;align-items:center;justify-content:center;font-size:8px;color:#fff;cursor:pointer}
+.atch-item:hover .atch-rm{display:flex}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.on{display:flex}
+.modal{width:540px;max-height:85vh;background:#16213e;border-radius:10px;border:1px solid #0f3460;overflow:hidden;display:flex;flex-direction:column}
+.modal-hdr{padding:12px 16px;border-bottom:1px solid #0f3460;display:flex;align-items:center;justify-content:space-between}
+.modal-tl{font-size:14px;font-weight:600}
+.modal-cl{background:none;border:none;color:#888;font-size:16px;cursor:pointer}
+.modal-cl:hover{color:#fff}
+.modal-tabs{display:flex;border-bottom:1px solid #0f3460}
+.modal-tab{padding:8px 12px;font-size:11px;color:#888;background:none;border:none;cursor:pointer}
+.modal-tab.on{color:#fff;border-bottom:2px solid #6366f1}
+.modal-tab:hover{color:#fff}
+.modal-body{flex:1;overflow-y:auto;padding:16px}
+.form-g{margin-bottom:12px}
+.form-l{font-size:10px;color:#888;margin-bottom:3px;display:block}
+.form-i{width:100%;height:28px;background:#1a1a2e;border:1px solid #0f3460;border-radius:5px;padding:0 8px;color:#e0e0e0;font-size:11px}
+.form-i:focus{border-color:#6366f1;outline:none}
+.form-r{display:flex;gap:8px}
+.form-r .form-g{flex:1}
+.form-s{width:100%;height:28px;background:#1a1a2e;border:1px solid #0f3460;border-radius:5px;padding:0 8px;color:#e0e0e0;font-size:11px}
+.btn{padding:6px 12px;font-size:10px;border-radius:5px;border:none;cursor:pointer}
+.btn-p{background:#6366f1;color:#fff}
+.btn-p:hover{background:#4f46e5}
+.btn-s{background:#0f3460;color:#e0e0e0}
+.btn-s:hover{background:#1a4080}
+.btn-grp{display:flex;gap:6px;justify-content:flex-end;margin-top:12px}
+.ssh-hosts{display:flex;flex-direction:column;gap:6px}
+.ssh-grp{border:1px solid #0f3460;border-radius:6px;overflow:hidden}
+.ssh-grp-hdr{display:flex;align-items:center;gap:6px;padding:7px 10px;background:#1a1a2e;cursor:pointer}
+.ssh-grp-hdr:hover{background:#1e2a3a}
+.ssh-grp-arr{font-size:8px;color:#888;transition:transform .2s}
+.ssh-grp-arr.off{transform:rotate(-90deg)}
+.ssh-grp-clr{width:7px;height:7px;border-radius:2px}
+.ssh-grp-nm{font-size:11px;font-weight:600;flex:1}
+.ssh-grp-cnt{font-size:9px;color:#888;background:#0f3460;padding:1px 5px;border-radius:7px}
+.ssh-grp-add{background:none;border:none;color:#888;font-size:11px;padding:1px 5px;border-radius:3px;cursor:pointer}
+.ssh-grp-add:hover{color:#6366f1}
+.ssh-hosts-list.collapsed{display:none}
+.ssh-host{display:flex;align-items:center;gap:8px;padding:7px 10px;border-top:1px solid #0f3460}
+.ssh-host:hover{background:#1e2a3a}
+.ssh-host-info{flex:1;min-width:0}
+.ssh-host-nm{font-size:11px;font-weight:500}
+.ssh-host-conn{font-size:9px;color:#888;margin-top:1px}
+.ssh-act{display:flex;gap:2px}
+.ssh-btn{padding:2px 7px;font-size:9px;border-radius:3px;border:none;cursor:pointer}
+.ssh-btn-conn{background:#22c55e;color:#fff}
+.ssh-btn-conn:hover{background:#16a34a}
+.ssh-btn-edit{background:#0f3460;color:#e0e0e0}
+.ssh-btn-del{background:transparent;color:#ef4444}
+.ssh-term-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;align-items:center;justify-content:center}
+.ssh-term-overlay.on{display:flex}
+.ssh-term{width:640px;height:380px;background:#0d1117;border-radius:8px;border:1px solid #30363d;overflow:hidden;display:flex;flex-direction:column}
+.ssh-term-hdr{height:28px;background:#161b22;display:flex;align-items:center;padding:0 8px;gap:5px;border-bottom:1px solid #30363d}
+.ssh-term-dot{width:10px;height:10px;border-radius:50%}
+.ssh-term-dot.r{background:#ef4444}.ssh-term-dot.y{background:#eab308}.ssh-term-dot.g{background:#22c55e}
+.ssh-term-tl{flex:1;font-size:10px;color:#8b949e;text-align:center}
+.ssh-term-body{flex:1;padding:12px;font-family:monospace;font-size:11px;line-height:1.6;overflow-y:auto}
+.ssh-prompt{color:#22c55e}
+.ssh-output{color:#8b949e}
+.ssh-cursor{animation:blink 1s infinite}
+@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+.combo{display:flex;gap:5px;align-items:center}
+.combo input{flex:1}
+.combo select{width:28px;height:28px;padding:0;text-align:center}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#555}
+.empty-icon{font-size:36px;margin-bottom:8px}
+.empty-txt{font-size:11px}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <button class="hdr-btn">☰</button>
+  <button class="hdr-btn">⌘</button>
+  <div class="hdr-sep"></div>
+  <div style="flex:1"></div>
+  <input class="hdr-srch" placeholder="🔍 Search...">
+  <div class="hdr-add">
+    <button class="hdr-add-btn" onclick="document.getElementById('add-popup').classList.toggle('on')">+</button>
+    <div class="add-popup" id="add-popup">
+      <button onclick="document.getElementById('add-popup').classList.remove('on');alert('新增終端機分頁')">💻 終端機</button>
+      <button onclick="document.getElementById('add-popup').classList.remove('on');alert('新增編輯器分頁')">📄 編輯器</button>
+      <button onclick="document.getElementById('add-popup').classList.remove('on');addNote()">📝 筆記</button>
+      <button onclick="document.getElementById('add-popup').classList.remove('on');showAddHost()">🔌 SSH 主機</button>
+      <button onclick="document.getElementById('add-popup').classList.remove('on');alert('新增預覽分頁')">🔗 預覽</button>
+    </div>
+  </div>
+  <button class="hdr-btn" onclick="document.getElementById('modal').classList.add('on')" title="Settings">⚙️</button>
+</div>
+<div class="app">
+  <div class="sb">
+    <div class="sb-hdr">
+      <input class="sb-srch" placeholder="🔍 搜尋筆記..." style="width:100%">
+    </div>
+    <div class="notes" id="notes">
+      <!-- 頂層分組: 工作 -->
+      <div class="grp">
+        <div class="grp-hdr" onclick="toggleGrp(this)">
+          <span class="grp-arr">▼</span>
+          <span class="grp-clr" style="background:#6366f1"></span>
+          <span class="grp-nm">💼 工作</span>
+          <span class="grp-cnt">1</span>
+          <div class="grp-act">
+            <button onclick="event.stopPropagation();addNote('work')">＋筆記</button>
+            <button onclick="event.stopPropagation()">📁</button>
+          </div>
+        </div>
+        <!-- 子分組 -->
+        <div class="sub-grp">
+          <div class="grp">
+            <div class="grp-hdr" onclick="toggleGrp(this)">
+              <span class="grp-arr">▼</span>
+              <span class="grp-clr" style="background:#8b5cf6"></span>
+              <span class="grp-nm">Sprint</span>
+              <span class="grp-cnt">2</span>
+              <div class="grp-act"><button onclick="event.stopPropagation();addNote('work-sprint')">＋</button></div>
+            </div>
+            <div class="note" onclick="selNote(this,'Sprint 24 回顧')"><span class="note-ic">📝</span><div class="note-info"><div class="note-tl">Sprint 24 回顧</div><div class="note-pr">完成了 API 重構...</div></div></div>
+            <div class="note on" onclick="selNote(this,'部署檢查清單')"><span class="note-ic">⭐</span><div class="note-info"><div class="note-tl">部署檢查清單</div><div class="note-pr"># 部署檢查清單...</div><div class="note-atch">📎 2 附件</div></div></div>
+          </div>
+          <div class="grp">
+            <div class="grp-hdr" onclick="toggleGrp(this)">
+              <span class="grp-arr off">▶</span>
+              <span class="grp-clr" style="background:#a855f7"></span>
+              <span class="grp-nm">會議記錄</span>
+              <span class="grp-cnt">3</span>
+            </div>
+          </div>
+        </div>
+        <div class="note" onclick="selNote(this,'Quick Ref')"><span class="note-ic">📝</span><div class="note-info"><div class="note-tl">Quick Reference</div><div class="note-pr">Git commands...</div></div></div>
+      </div>
+      <!-- 頂層分組: 學習 -->
+      <div class="grp">
+        <div class="grp-hdr" onclick="toggleGrp(this)">
+          <span class="grp-arr">▼</span>
+          <span class="grp-clr" style="background:#22c55e"></span>
+          <span class="grp-nm">📚 學習</span>
+          <span class="grp-cnt">2</span>
+          <div class="grp-act"><button onclick="event.stopPropagation();addNote('learning')">＋筆記</button><button onclick="event.stopPropagation()">📁</button></div>
+        </div>
+        <div class="sub-grp">
+          <div class="grp">
+            <div class="grp-hdr" onclick="toggleGrp(this)">
+              <span class="grp-arr">▼</span>
+              <span class="grp-clr" style="background:#14b8a6"></span>
+              <span class="grp-nm">Rust</span>
+              <span class="grp-cnt">1</span>
+              <div class="grp-act"><button onclick="event.stopPropagation();addNote('learning-rust')">＋</button></div>
+            </div>
+            <div class="note" onclick="selNote(this,'Rust 入門')"><span class="note-ic">📝</span><div class="note-info"><div class="note-tl">Rust 入門</div><div class="note-pr">所有權系統...</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-rail">
+      <button class="rail-btn">📁 Files</button>
+      <button class="rail-btn">🔀 Git</button>
+      <button class="rail-btn on">📝 Notes</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="space-sel">
+      <span style="font-size:10px;color:#888">Space:</span>
+      <button class="space-btn on" onclick="switchSpace(this,'default')">🏠 Default</button>
+      <button class="space-btn" onclick="switchSpace(this,'project-a')">📁 專案 A</button>
+      <button class="space-btn" onclick="switchSpace(this,'project-b')">📁 專案 B</button>
+    </div>
+    <div class="edt">
+      <div class="edt-bar">
+        <button class="edt-btn"><b>B</b></button>
+        <button class="edt-btn"><i>I</i></button>
+        <div class="edt-sep"></div>
+        <button class="edt-btn">H1</button><button class="edt-btn">H2</button><button class="edt-btn">H3</button>
+        <div class="edt-sep"></div>
+        <button class="edt-btn">• List</button><button class="edt-btn">☑ Task</button>
+        <div class="edt-sep"></div>
+        <button class="edt-btn">{ } Code</button><button class="edt-btn">🔗 Link</button>
+        <div style="flex:1"></div>
+        <button class="edt-btn" onclick="document.getElementById('f-input').click()">📎 附件</button>
+        <input type="file" id="f-input" multiple style="display:none" onchange="addAttach(this.files)">
+        <button class="edt-btn" id="pv-btn" onclick="togglePrev()">👁 預覽</button>
+      </div>
+      <div class="edt-title">
+        <input type="text" value="部署檢查清單" id="noteTitle">
+      </div>
+      <div class="edt-content">
+        <textarea class="edt-text" id="edtText" spellcheck="false"># 部署檢查清單
+
+## 部署前
+- [x] 跑完整測試
+- [ ] 更新版本號
+- [ ] 檢查環境變數
+- [ ] 確認資料庫遷移
+
+## 部署步驟
+1. `docker build -t app .`
+2. `docker push registry/app:latest`
+3. `kubectl rollout restart deploy/app`
+
+## 環境變數
+```bash
+DB_HOST=prod-db.example.com
+REDIS_URL=redis://prod-redis:6379
+```
+
+> ⚠️ 部署前請先通知團隊</textarea>
+        <div class="edt-prev" id="edtPrev"></div>
+      </div>
+      <div class="atch-bar" id="atchBar">
+        <div class="atch-item">🖼️ screenshot.png <span style="color:#888">245 KB</span><span class="atch-rm" onclick="this.parentElement.remove()">×</span></div>
+        <div class="atch-item">📄 deploy.pdf <span style="color:#888">1.2 MB</span><span class="atch-rm" onclick="this.parentElement.remove()">×</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-tl">設定</span>
+      <button class="modal-cl" onclick="document.getElementById('modal').classList.remove('on')">×</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab" onclick="switchTab(this,'general')">General</button>
+      <button class="modal-tab" onclick="switchTab(this,'themes')">Themes</button>
+      <button class="modal-tab on" onclick="switchTab(this,'ssh')">SSH</button>
+      <button class="modal-tab" onclick="switchTab(this,'agents')">Agents</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-size:11px;color:#888">管理 SSH 主機分組</span>
+        <button class="btn btn-p" onclick="showAddHost()">➕ Add Host</button>
+      </div>
+      <div class="ssh-hosts" id="sshHosts">
+        <!-- Group: Production -->
+        <div class="ssh-grp">
+          <div class="ssh-grp-hdr" onclick="toggleSshGrp(this)">
+            <span class="ssh-grp-arr">▼</span>
+            <span class="ssh-grp-clr" style="background:#ef4444"></span>
+            <span class="ssh-grp-nm">🏭 Production</span>
+            <span class="ssh-grp-cnt">2</span>
+            <button class="ssh-grp-add" onclick="event.stopPropagation();showAddHost('production')">＋</button>
+          </div>
+          <div class="ssh-hosts-list">
+            <div class="ssh-host">
+              <div class="ssh-host-info"><div class="ssh-host-nm">🖥️ Web Server 01</div><div class="ssh-host-conn">root@prod-web01.example.com:22 · SSH Agent</div></div>
+              <div class="ssh-act">
+                <button class="ssh-btn ssh-btn-conn" onclick="openSshTerm('Web Server 01','prod-web01.com','22','root')">Connect</button>
+                <button class="ssh-btn ssh-btn-edit">Edit</button>
+                <button class="ssh-btn ssh-btn-del" onclick="this.closest('.ssh-host').remove()">×</button>
+              </div>
+            </div>
+            <div class="ssh-host">
+              <div class="ssh-host-info"><div class="ssh-host-nm">🗄️ DB Primary</div><div class="ssh-host-conn">admin@prod-db01.example.com:22 · Key</div></div>
+              <div class="ssh-act">
+                <button class="ssh-btn ssh-btn-conn" onclick="openSshTerm('DB Primary','prod-db01.com','22','admin')">Connect</button>
+                <button class="ssh-btn ssh-btn-edit">Edit</button>
+                <button class="ssh-btn ssh-btn-del" onclick="this.closest('.ssh-host').remove()">×</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Group: Staging -->
+        <div class="ssh-grp">
+          <div class="ssh-grp-hdr" onclick="toggleSshGrp(this)">
+            <span class="ssh-grp-arr">▼</span>
+            <span class="ssh-grp-clr" style="background:#22c55e"></span>
+            <span class="ssh-grp-nm">🧪 Staging</span>
+            <span class="ssh-grp-cnt">1</span>
+            <button class="ssh-grp-add" onclick="event.stopPropagation();showAddHost('staging')">＋</button>
+          </div>
+          <div class="ssh-hosts-list">
+            <div class="ssh-host">
+              <div class="ssh-host-info"><div class="ssh-host-nm">🖥️ Staging</div><div class="ssh-host-conn">deploy@staging.example.com:2222 · Key</div></div>
+              <div class="ssh-act">
+                <button class="ssh-btn ssh-btn-conn" onclick="openSshTerm('Staging','staging.com','2222','deploy')">Connect</button>
+                <button class="ssh-btn ssh-btn-edit">Edit</button>
+                <button class="ssh-btn ssh-btn-del" onclick="this.closest('.ssh-host').remove()">×</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Group: Dev (collapsed) -->
+        <div class="ssh-grp">
+          <div class="ssh-grp-hdr" onclick="toggleSshGrp(this)">
+            <span class="ssh-grp-arr off">▶</span>
+            <span class="ssh-grp-clr" style="background:#3b82f6"></span>
+            <span class="ssh-grp-nm">💻 Development</span>
+            <span class="ssh-grp-cnt">3</span>
+            <button class="ssh-grp-add" onclick="event.stopPropagation();showAddHost('dev')">＋</button>
+          </div>
+          <div class="ssh-hosts-list collapsed"></div>
+        </div>
+      </div>
+
+      <!-- Add Host Form -->
+      <div id="addHostForm" style="display:none;margin-top:12px;padding:12px;background:#1a1a2e;border-radius:6px;border:1px solid #0f3460">
+        <div class="form-g"><label class="form-l">Label</label><input class="form-i" placeholder="My Server" id="hLabel"></div>
+        <div class="form-r">
+          <div class="form-g"><label class="form-l">Host</label><input class="form-i" placeholder="example.com" id="hHost"></div>
+          <div class="form-g" style="flex:0 0 60px"><label class="form-l">Port</label><input class="form-i" value="22" id="hPort"></div>
+        </div>
+        <div class="form-g"><label class="form-l">User</label><input class="form-i" placeholder="root" id="hUser"></div>
+        <div class="form-g"><label class="form-l">Group (可輸入新分組或選擇現有)</label>
+          <div class="combo">
+            <input class="form-i" placeholder="選擇或輸入分組..." id="hGroup" list="grpList">
+            <datalist id="grpList">
+              <option value="production">🏭 Production</option>
+              <option value="staging">🧪 Staging</option>
+              <option value="dev">💻 Development</option>
+            </datalist>
+          </div>
+        </div>
+        <div class="form-g"><label class="form-l">Auth</label>
+          <select class="form-s" id="hAuth"><option value="agent">SSH Agent</option><option value="key">Private Key</option><option value="password">Password</option></select>
+        </div>
+        <div class="btn-grp">
+          <button class="btn btn-s" onclick="document.getElementById('addHostForm').style.display='none'">Cancel</button>
+          <button class="btn btn-s" onclick="alert('測試連線...')">Test</button>
+          <button class="btn btn-p" onclick="addHost()">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SSH Terminal -->
+<div class="ssh-term-overlay" id="sshTermOverlay" onclick="closeSshTerm()">
+  <div class="ssh-term" onclick="event.stopPropagation()">
+    <div class="ssh-term-hdr">
+      <span class="ssh-term-dot r" onclick="closeSshTerm()"></span>
+      <span class="ssh-term-dot y"></span>
+      <span class="ssh-term-dot g"></span>
+      <span class="ssh-term-tl" id="sshTermTitle">SSH Connection</span>
+    </div>
+    <div class="ssh-term-body" id="sshTermBody"></div>
+  </div>
+</div>
+
+<script>
+function toggleGrp(el){el.querySelector('.grp-arr').classList.toggle('off');const s=el.nextElementSibling;if(s)s.classList.toggle('collapsed')}
+function toggleSshGrp(el){el.querySelector('.ssh-grp-arr').classList.toggle('off');el.nextElementSibling.classList.toggle('collapsed')}
+function selNote(el,tl){document.querySelectorAll('.note').forEach(n=>n.classList.remove('on'));el.classList.add('on');document.getElementById('noteTitle').value=tl}
+function addNote(gid){const d=document.createElement('div');d.className='note';d.onclick=function(){selNote(this,'無標題筆記')};d.innerHTML='<span class="note-ic">📝</span><div class="note-info"><div class="note-tl">無標題筆記</div><div class="note-pr">開始寫作...</div></div>';const list=document.getElementById('notes');list.insertBefore(d,list.firstChild)}
+function togglePrev(){const t=document.getElementById('edtText');const p=document.getElementById('edtPrev');const b=document.getElementById('pv-btn');if(p.style.display==='none'){p.style.display='flex';t.style.display='none';b.textContent='✏️ 編輯';p.innerHTML=md2html(t.value)}else{p.style.display='none';t.style.display='block';b.textContent='👁 預覽'}}
+function md2html(md){return md.replace(/`{3}(\w*)\n([\s\S]*?)`{3}/g,'<pre><code>$2</code></pre>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^# (.+)$/gm,'<h1>$1</h1>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/^- \[x\] (.+)$/gm,'<li>✅ $1</li>').replace(/^- \[ \] (.+)$/gm,'<li>⬜ $1</li>').replace(/^- (.+)$/gm,'<li>$1</li>').replace(/^> (.+)$/gm,'<blockquote>$1</blockquote>').replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>').replace(/\n/g,'<br/>')}
+function addAttach(files){const bar=document.getElementById('atchBar');for(const f of files){const d=document.createElement('div');d.className='atch-item';d.innerHTML=`${f.type.startsWith('image/')?'🖼️':'📄'} ${f.name} <span style="color:#888">${(f.size/1024).toFixed(0)} KB</span><span class="atch-rm" onclick="this.parentElement.remove()">×</span>`;bar.appendChild(d)}}
+function switchTab(el,t){document.querySelectorAll('.modal-tab').forEach(x=>x.classList.remove('on'));el.classList.add('on')}
+function showAddHost(g){document.getElementById('addHostForm').style.display='block';if(g)document.getElementById('hGroup').value=g}
+function addHost(){const h=document.getElementById('hHost').value;if(!h){alert('請輸入 Host');return}document.getElementById('addHostForm').style.display='none';alert('已新增主機: '+h)}
+function openSshTerm(label,host,port,user){document.getElementById('sshTermTitle').textContent=label+' — '+user+'@'+host+':'+port;document.getElementById('sshTermOverlay').classList.add('on');const b=document.getElementById('sshTermBody');b.innerHTML='<span class="ssh-output">Connecting to '+host+'...</span>';setTimeout(()=>{b.innerHTML='<span class="ssh-output">Connected.</span>\n<span class="ssh-prompt">'+user+'@'+host+':~$ </span><span class="ssh-output">uptime</span>\n<span class="ssh-output"> 10:23:45 up 42 days, load: 0.15</span>\n<span class="ssh-prompt">'+user+'@'+host+':~$ </span><span class="ssh-cursor">_</span>'},600)}
+function closeSshTerm(){document.getElementById('sshTermOverlay').classList.remove('on')}
+function switchSpace(el,id){document.querySelectorAll('.space-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');alert('切換到 Space: '+id+'\n\n實際應用中會顯示該 Space 已打開的筆記/SSH主機')}
+</script>
+</body>
+</html>
