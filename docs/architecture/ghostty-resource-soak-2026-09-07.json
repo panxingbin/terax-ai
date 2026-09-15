@@ -1,0 +1,32 @@
+{
+  "baselineCommit": "0e3fae9",
+  "baseline": {
+    "scope": "Node WASM core only; excludes Tauri IPC, WebKit, GPU, and application energy",
+    "recordedAt": "2026-09-06T23:20:10.651Z",
+    "node": "v26.5.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "reports": [
+      {
+        "artifact": "ghostty-vt.wasm",
+        "sha256": "b41c89cd5463fd4493432b5593f1e86b31597174bbdc9c43891eaf1243571fd6",
+        "blockTracking": true,
+        "markerCounts": [2048, 2048, 2048, 2048, 2048],
+        "models": 5,
+        "updates": 655360,
+        "inputBytes": 62684160,
+        "elapsedMs": 13611.622041,
+        "cpuMicroseconds": {"user": 13647926, "system": 63138},
+        "finalWasmBytes": 71434240,
+        "plateauGrowthBytes": 0,
+        "resources": [
+          {"cellCapacity": 5632, "rowCapacity": 48, "renderStateResets": 1},
+          {"cellCapacity": 5632, "rowCapacity": 48, "renderStateResets": 64},
+          {"cellCapacity": 5632, "rowCapacity": 48, "renderStateResets": 1},
+          {"cellCapacity": 5632, "rowCapacity": 48, "renderStateResets": 64},
+          {"cellCapacity": 8192, "rowCapacity": 64, "renderStateResets": 64}
+        ]
+      }
+    ]
+  }
+}
